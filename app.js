@@ -7,6 +7,7 @@ var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var passport = require('passport');
 var authenticate = require('./authenticate');
+var config= require('./config.js');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -19,7 +20,7 @@ const mongoose = require('mongoose');
 const Dishes = require('./models/dishes');
 const Promotions = require('./models/promotions');
 
-const url = 'mongodb://localhost:27017/conFusion';
+const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 
 connect.then((db) => {
@@ -36,19 +37,22 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser('12345-67890-09876-54321'));
-app.use(session({
+/* Ci-dessous la syntaxe de session (on l'a supprimé lorqu'on a utilisé jwt authentication) */
+/* app.use(session({
   name: 'session-id',
   secret: '12345-67890-09876-54321',
   saveUninitialised: false,
   store: new FileStore()
-}));
+})); 
+*/
 
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+/* Supprimée lors de l'utilisation de jwt authentication
 function auth(req, res, next) {
 
   if (!req.user) {     //user défini par passport
@@ -60,6 +64,8 @@ function auth(req, res, next) {
       next();
     }
 }
+
+app.use(auth); */
 
 
 // function auth(req, res, next) {
@@ -134,8 +140,6 @@ function auth(req, res, next) {
 //     return next(err);
 //   }
 // }
-
-app.use(auth);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
