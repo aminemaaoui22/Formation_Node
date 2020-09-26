@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose= require('mongoose');
+const cors = require('./cors');
 
 const authenticate = require('../authenticate');
 
@@ -11,6 +12,7 @@ promoRouter.use(bodyParser.json());
 
 
 promoRouter.route('/')
+.options(cors.corsWithOptions, (req, res) => { res.sendStatus(200) })
     .get((req, res, next) => {
         Promotions.find({})
             .then((promotions) => {
@@ -48,6 +50,7 @@ promoRouter.route('/')
     });
 
 promoRouter.route('/:promoId')
+.options(cors.corsWithOptions, (req, res) => { res.sendStatus(200) })
     .get((req, res, next) => {
         Promotions.findById(req.params.promoId)
             .then((promotion) => {
